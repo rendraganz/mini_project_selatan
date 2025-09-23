@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
 
-class MenuItem {
-  String name;
-  int price;
-  int qty;
-
-  MenuItem({required this.name, required this.price, this.qty = 0});
-}
-
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
@@ -16,202 +8,143 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  List<MenuItem> makanan = [
-    MenuItem(name: "Makanan 1", price: 5000, qty: 3), 
-    MenuItem(name: "Makanan 2", price: 5000, qty: 2),
-    MenuItem(name: "Makanan 3", price: 5000),
-    MenuItem(name: "Makanan 4", price: 5000),
-    MenuItem(name: "Makanan 5", price: 5000),
-  ];
+  List<int> makananCount = [0, 0, 0, 0, 0];
+  List<int> minumanCount = [0, 0, 0, 0, 0];
 
-  List<MenuItem> minuman = [
-    MenuItem(name: "Minuman 1", price: 7000),
-    MenuItem(name: "Minuman 2", price: 7000),
-    MenuItem(name: "Minuman 3", price: 7000, qty: 2),
-    MenuItem(name: "Minuman 4", price: 7000, qty: 2),
-    MenuItem(name: "Minuman 5", price: 7000),
-  ];
+  void resetPesanan() {
+    setState(() {
+      makananCount = List.filled(makananCount.length, 0);
+      minumanCount = List.filled(minumanCount.length, 0);
+    });
+  }
 
-  Widget buildMenuList(String title, List<MenuItem> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        ...items.map(
-          (item) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              children: [
-                // qty box
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.grey.shade200,
-                  ),
-                  child: Center(
-                    child: Text(
-                      item.qty.toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
+  void tambahMakanan(int index) {
+    setState(() {
+      makananCount[index]++;
+    });
+  }
 
-                // name & price
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(item.name,
-                          style: const TextStyle(fontSize: 14)),
-                      Text("Rp. ${item.price}",
-                          style: const TextStyle(fontSize: 14)),
-                    ],
-                  ),
-                ),
+  void kurangMakanan(int index) {
+    setState(() {
+      if (makananCount[index] > 0) makananCount[index]--;
+    });
+  }
 
-                // action buttons
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.grey.shade100,
-                  ),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove, size: 18),
-                        onPressed: () {
-                          setState(() {
-                            if (item.qty > 0) item.qty--;
-                          });
-                        },
-                      ),
-                      Container(
-                        width: 1,
-                        height: 24,
-                        color: Colors.grey.shade300,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add, size: 18),
-                        onPressed: () {
-                          setState(() {
-                            item.qty++;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+  void tambahMinuman(int index) {
+    setState(() {
+      minumanCount[index]++;
+    });
+  }
+
+  void kurangMinuman(int index) {
+    setState(() {
+      if (minumanCount[index] > 0) minumanCount[index]--;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "MENUS",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
+        title: const Text("MENUS", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.all(12.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildMenuList("Makanan", makanan),
+              const Divider(),
+              const Text("Makanan", style: TextStyle(color: Colors.grey)),
+              const SizedBox(height: 8),
+              for (int i = 0; i < makananCount.length; i++)
+                buildItemRow(
+                  title: "Makanan ${i + 1}",
+                  price: "Rp. 5000",
+                  count: makananCount[i],
+                  onAdd: () => tambahMakanan(i),
+                  onRemove: () => kurangMakanan(i),
+                ),
               const SizedBox(height: 16),
-              buildMenuList("Minuman", minuman),
+              const Text("Minuman", style: TextStyle(color: Colors.grey)),
+              const SizedBox(height: 8),
+              for (int i = 0; i < minumanCount.length; i++)
+                buildItemRow(
+                  title: "Minuman ${i + 1}",
+                  price: "Rp. 7000",
+                  count: minumanCount[i],
+                  onAdd: () => tambahMinuman(i),
+                  onRemove: () => kurangMinuman(i),
+                ),
               const SizedBox(height: 20),
-
-              // pagination
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("← Previous",
-                      style: TextStyle(color: Colors.grey.shade500)),
-                  const SizedBox(width: 16),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: Colors.black,
-                    ),
-                    child: const Text(
-                      "1",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text("2"),
-                  const SizedBox(width: 8),
-                  const Text("..."),
-                  const SizedBox(width: 8),
-                  const Text("4"),
-                  const SizedBox(width: 16),
-                  Text("Next →",
-                      style: TextStyle(color: Colors.grey.shade700)),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
+                    onPressed: () {
+                      // Transaction function nanti dihubungkan
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 32, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      shape: const StadiumBorder(),
                     ),
-                    onPressed: () {},
                     child: const Text("Transaction"),
                   ),
                   ElevatedButton(
+                    onPressed: resetPesanan,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 32, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      shape: const StadiumBorder(),
                     ),
-                    onPressed: () {},
                     child: const Text("Reset"),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Widget untuk 1 row item
+  Widget buildItemRow({
+    required String title,
+    required String price,
+    required int count,
+    required VoidCallback onAdd,
+    required VoidCallback onRemove,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CircleAvatar(
+            radius: 14,
+            backgroundColor: Colors.grey.shade200,
+            child: Text("$count", style: const TextStyle(fontSize: 12)),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(title),
+            ),
+          ),
+          Text(price),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: onRemove,
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: onAdd,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

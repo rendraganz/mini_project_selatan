@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('email', email);
 
-      final fullName = (userData[email]!['fullName'] ?? '') as String;
+      final fullName = (userData[email]!['fullName'] ?? '');
 
       Navigator.pushReplacement(
         context,

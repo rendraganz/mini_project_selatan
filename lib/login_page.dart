@@ -19,7 +19,8 @@ class _LoginPageState extends State<LoginPage> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    if (userData.containsKey(email) && userData[email]!['password'] == password) {
+    if (userData.containsKey(email) &&
+        userData[email]!['password'] == password) {
       // simpan session
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
@@ -38,7 +39,10 @@ class _LoginPageState extends State<LoginPage> {
           title: const Text('Login Gagal'),
           content: const Text('Email atau password salah.'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
           ],
         ),
       );
@@ -68,23 +72,39 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   const Icon(Icons.shopping_bag, size: 100, color: primaryBlue),
                   const SizedBox(height: 16),
-                  const Text('WELCOME BACK !', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'WELCOME BACK !',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 4),
-                  const Text('Sign in to continue', style: TextStyle(fontSize: 14, color: primaryBlue, fontWeight: FontWeight.w400)),
+                  const Text(
+                    'Sign in to continue',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: primaryBlue,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
                   const SizedBox(height: 40),
 
                   // Email (sebagai identifier)
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(hintText: 'Email', border: UnderlineInputBorder()),
+                    decoration: const InputDecoration(
+                      hintText: 'Email',
+                      border: UnderlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 20),
 
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(hintText: 'Password', border: UnderlineInputBorder()),
+                    decoration: const InputDecoration(
+                      hintText: 'Password',
+                      border: UnderlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 30),
 
@@ -96,7 +116,9 @@ class _LoginPageState extends State<LoginPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryBlue,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                           ),
                           child: const Text('Login'),
                         ),
@@ -105,12 +127,19 @@ class _LoginPageState extends State<LoginPage> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterPage(),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryBlue,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                           ),
                           child: const Text('Register'),
                         ),
@@ -122,8 +151,16 @@ class _LoginPageState extends State<LoginPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {/* lost password */},
-                      child: const Text('Lost Password ?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                      onPressed: () {
+                        /* lost password */
+                      },
+                      child: const Text(
+                        'Lost Password ?',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ],

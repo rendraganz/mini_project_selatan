@@ -19,13 +19,12 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscureConfirmPassword = true;
 
   void _register() {
-    String fullName = _fullNameController.text;
-    String username = _usernameController.text;
-    String email = _emailController.text;
+    String fullName = _fullNameController.text.trim();
+    String username = _usernameController.text.trim();
+    String email = _emailController.text.trim();
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
 
-    // Validasi sederhana
     if (fullName.isEmpty || username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       _showDialog("Registrasi Gagal", "Harap isi semua kolom.");
       return;
@@ -46,7 +45,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    // Simpan user
+    // Simpan user menggunakan email sebagai key (konsisten dengan main.dart)
     userData[email] = {
       'fullName': fullName,
       'username': username,
@@ -57,8 +56,8 @@ class _RegisterPageState extends State<RegisterPage> {
       "Registrasi Berhasil",
       "Akun Anda telah dibuat. Silakan login.",
       onOk: () {
-        Navigator.pop(context); // tutup dialog
-        Navigator.pop(context); // kembali ke login
+        // setelah menutup dialog, kembali ke halaman login
+        Navigator.pop(context);
       },
     );
   }
@@ -72,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context); // tutup dialog
               if (onOk != null) onOk();
             },
             child: const Text("OK"),
@@ -83,8 +82,21 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   @override
+  void dispose() {
+    _fullNameController.dispose();
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    const primaryBlue = Color(0xFF0088FF);
+
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -92,66 +104,42 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Icon Logo
                 const Icon(
                   Icons.shopping_bag,
                   size: 80,
-                  color: Color(0xFF0088FF), // warna #0088FF
+                  color: primaryBlue,
                 ),
                 const SizedBox(height: 10),
-
-                // Title
                 const Text(
                   'Create Account',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 4),
-
                 const Text(
                   'Join us today !',
-                  style: TextStyle(
-                    color: Color(0xFF0088FF),
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: primaryBlue, fontSize: 14),
                 ),
-
                 const SizedBox(height: 30),
 
-                // Fullname
                 TextField(
                   controller: _fullNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Fullname',
-                    border: UnderlineInputBorder(),
-                  ),
+                  decoration: const InputDecoration(labelText: 'Fullname', border: UnderlineInputBorder()),
                 ),
                 const SizedBox(height: 15),
 
-                // Username
                 TextField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    border: UnderlineInputBorder(),
-                  ),
+                  decoration: const InputDecoration(labelText: 'Username', border: UnderlineInputBorder()),
                 ),
                 const SizedBox(height: 15),
 
-                // Email
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: UnderlineInputBorder(),
-                  ),
+                  decoration: const InputDecoration(labelText: 'Email', border: UnderlineInputBorder()),
                 ),
                 const SizedBox(height: 15),
 
-                // Password
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -159,20 +147,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelText: 'Password',
                     border: const UnderlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
+                      icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
                 ),
                 const SizedBox(height: 15),
 
-                // Confirm Password
                 TextField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
@@ -180,53 +161,34 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelText: 'Confirm Password',
                     border: const UnderlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
+                      icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                     ),
                   ),
                 ),
                 const SizedBox(height: 30),
 
-                // Register Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _register,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0088FF), // warna #0088FF
+                      backgroundColor: primaryBlue,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+                    child: const Text('Register', style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
-                const SizedBox(height: 20),
 
-                // Sign In Link
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Already have an account? "),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Text(
-                        "Sign In",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
+                      child: const Text("Sign In", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
                     ),
                   ],
                 ),

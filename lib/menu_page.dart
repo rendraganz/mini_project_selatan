@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mini_project_selatan/total_page.';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -82,7 +83,15 @@ class _MenuPageState extends State<MenuPage> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Transaction function nanti dihubungkan
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TotalPage(
+                            makananCount: makananCount,
+                            minumanCount: minumanCount,
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,

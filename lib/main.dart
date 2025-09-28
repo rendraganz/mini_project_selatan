@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'menu_page.dart'; // import file halaman menu
+import 'package:mini_project_selatan/data/user_data.dart';
+import 'package:mini_project_selatan/login_page.dart';
+import 'package:mini_project_selatan/register_page.dart';
+import 'package:mini_project_selatan/menu_page.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // sesi login
 
 void main() {
   runApp(const MyApp());
@@ -8,15 +13,43 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // sesi login
+  Future<Widget> _getInitialPage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if(isLoggedIn) {
+      final email = prefs.getString('email');
+      if (email != null && userData.containsKey(email)) {
+        return MenuPage(
+          fullName: userData[email]!['fullName']!);
+      }
+    }
+    return LoginPage();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Menu App",
+      title: 'Flutter Login UI',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
-      home: const MenuPage(), // arahkan ke MenuPage
+      debugShowCheckedModeBanner: false,
+      home: FutureBuilder<Widget>(
+        future: _getInitialPage(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          return snapshot.data!;
+        }
+      ),
     );
   }
 }

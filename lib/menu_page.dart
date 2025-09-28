@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mini_project_selatan/total_page.';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mini_project_selatan/login_page.dart';
+import 'package:mini_project_selatan/total_page.dart';
 
 class MenuPage extends StatefulWidget {
-  const MenuPage({super.key});
+  final String fullName;
+
+  const MenuPage({super.key, required this.fullName});
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -43,11 +47,28 @@ class _MenuPageState extends State<MenuPage> {
     });
   }
 
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // hapus session
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("MENUS", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("Welcome, ${widget.fullName}"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -95,6 +116,7 @@ class _MenuPageState extends State<MenuPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
                       shape: const StadiumBorder(),
                     ),
                     child: const Text("Transaction"),
@@ -103,6 +125,7 @@ class _MenuPageState extends State<MenuPage> {
                     onPressed: resetPesanan,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
                       shape: const StadiumBorder(),
                     ),
                     child: const Text("Reset"),

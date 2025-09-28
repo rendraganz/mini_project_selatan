@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'menu_page.dart';
 
 class TotalPage extends StatelessWidget {
   final List<int> makananCount;
@@ -95,21 +94,11 @@ class TotalPage extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text("Pembelian berhasil!"),
-                        action: SnackBarAction(
-                          label: "OK",
-                          onPressed: () {
-                            Navigator.pop(context); // balik ke MenuPage
-                          },
-                        ),
-                        duration: const Duration(seconds: 3),
-                      ),
-                    );
+                    // Fungsi bayar
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white, // teks jadi putih
                     shape: const StadiumBorder(),
                   ),
                   child: const Text("Bayar"),
@@ -121,6 +110,7 @@ class TotalPage extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white, // teks jadi putih
                     shape: const StadiumBorder(),
                   ),
                   child: const Text("Batal"),

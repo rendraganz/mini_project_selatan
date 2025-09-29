@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'register_page.dart';
-import 'home_page.dart';
-import 'data/user_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mini_project_selatan/data/user_data.dart';
+import 'package:mini_project_selatan/register_page.dart';
+import 'package:mini_project_selatan/menu_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,28 +12,32 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _login() {
-    final username = _usernameController.text.trim();
+  Future<void> _login() async {
+    final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    if (userData.containsKey(username) &&
-        userData[username]!['password'] == password) {
+    if (userData.containsKey(email) &&
+        userData[email]!['password'] == password) {
+      // simpan session
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('email', email);
+
+      final fullName = (userData[email]!['fullName'] ?? '');
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) =>
-              HomePage(fullName: userData[username]!['fullName']!),
-        ),
+        MaterialPageRoute(builder: (context) => MenuPage(fullName: fullName)),
       );
     } else {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Login Gagal'),
-          content: const Text('Username atau password salah.'),
+          content: const Text('Email atau password salah.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -46,13 +51,15 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    const primaryBlue = Color(0xFF0088FF);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -63,34 +70,34 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Icon tas belanja biru
-                  const Icon(Icons.shopping_bag,
-                      size: 100, color: Colors.blue),
+                  const Icon(Icons.shopping_bag, size: 100, color: primaryBlue),
                   const SizedBox(height: 16),
                   const Text(
                     'WELCOME BACK !',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   const Text(
                     'Sign in to continue',
                     style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w400),
+                      fontSize: 14,
+                      color: primaryBlue,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   const SizedBox(height: 40),
+
+                  // Email (sebagai identifier)
                   TextField(
-                    controller: _usernameController,
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
-                      hintText: 'Username',
+                      hintText: 'Email',
                       border: UnderlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 20),
+
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
@@ -100,15 +107,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 30),
+
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Tombol Login
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: primaryBlue,
+                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -117,7 +124,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // Tombol Register
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
@@ -129,7 +135,8 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: primaryBlue,
+                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -139,18 +146,20 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 12),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // aksi lost password (bisa diarahkan ke halaman reset)
+                        /* lost password */
                       },
                       child: const Text(
                         'Lost Password ?',
                         style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600),
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

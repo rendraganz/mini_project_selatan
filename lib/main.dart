@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mini_project_selatan/data/user_data.dart';
+import 'package:mini_project_selatan/login_page.dart';
+import 'package:mini_project_selatan/register_page.dart';
+import 'package:mini_project_selatan/menu_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // sesi login
 
